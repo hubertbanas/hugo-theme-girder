@@ -1,0 +1,13 @@
+name = "Girder"
+license = "MIT"
+licenselink = "https://github.com/hubertbanas/hugo-theme-girder/blob/main/LICENSE"
+description = "A boxed, corporate theme for company sites: hero carousel, dropdown navigation, service pages, photo gallery and a contact page with a map."
+homepage = "https://github.com/hubertbanas/hugo-theme-girder"
+demosite = "https://hubertbanas.github.io/hugo-theme-girder/"
+tags = ["business", "company", "corporate", "responsive", "gallery", "carousel", "accessible"]
+features = ["Hero carousel with pause control", "Three-level dropdown navigation", "Responsive WebP images", "Photo gallery with lightbox", "Contact page with OpenStreetMap", "Colours from site config", "Self-hosted fonts, no CDNs"]
+min_version = "0.146.0"
+
+[author]
+  name = "Hubert Banas"
+  homepage = "https://github.com/hubertbanas"

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 200" width="360" height="200">
+  <rect width="360" height="200" rx="4" fill="#2a2a2a"/>
+  <rect x="40" y="62" width="76" height="14" rx="2" fill="#77c385"/>
+  <rect x="70" y="76" width="16" height="48" fill="#5fae6e"/>
+  <rect x="40" y="124" width="76" height="14" rx="2" fill="#77c385"/>
+  <text x="136" y="96" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#e8e8e8">GIRDER</text>
+  <text x="137" y="124" font-family="Helvetica, Arial, sans-serif" font-size="16" letter-spacing="4" fill="#b0b0b0">LABS</text>
+</svg>

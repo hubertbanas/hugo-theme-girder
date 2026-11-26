@@ -1,0 +1,10 @@
+{{/* The gallery's square thumbnails, four to a row (two on phones). */}}
+{{ with .images }}
+  <div class="gallery-grid">
+    {{ range . }}
+      <a href="{{ (. | resources.Fingerprint).RelPermalink }}" class="gallery-grid__item glightbox" data-gallery="gallery" data-title="{{ .Title }}">
+        {{ partial "img.html" (dict "image" . "alt" .Title "width" 400 "height" 400 "widths" (slice 400)) }}
+      </a>
+    {{ end }}
+  </div>
+{{ end }}

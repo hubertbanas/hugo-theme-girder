@@ -1,0 +1,31 @@
+# Hugo in Docker, so Hugo and Dart Sass don't need to be installed. Use
+# ./site.sh rather than calling docker compose directly (see README.md).
+name: hugo-theme-girder
+
+services:
+  hugo:
+    # Hugo's official image: the extended edition, with Dart Sass bundled.
+    # CI builds with this same image (.github/workflows/ci.yml).
+    image: ghcr.io/gohugoio/hugo:v0.170.1@sha256:4cc9f383086c0fba180efcf7132cf2f025969c462fedf5fcd2bf921915416797
+    # Straight to hugo (the image's default entrypoint would npm install).
+    entrypoint: ['hugo']
+    # Run as the host user, so generated files (public/, resources/) are yours.
+    user: '${HOST_UID:-1000}:${HOST_GID:-1000}'
+    # The repo is mounted under its own name, so the demo site's
+    # themesDir = "../.." finds the theme whatever the clone's folder is called.
+    working_dir: /work/hugo-theme-girder/exampleSite
+    volumes:
+      - .:/work/hugo-theme-girder
+    environment:
+      HOME: /tmp
+      HUGO_CACHEDIR: /tmp/hugo_cache
+    ports:
+      - '${BIND:-127.0.0.1}:${PORT:-1313}:${PORT:-1313}'
+    # The preview renders pages in memory, so it never touches public/
+    # (./site.sh build's output). Resized images are kept in
+    # exampleSite/resources/_gen/, so only new or changed ones are redone.
+    command: >
+      server -D --renderToMemory --bind 0.0.0.0 --port ${PORT:-1313}
+      --baseURL http://localhost:${PORT:-1313}/
+      --liveReloadPort ${PORT:-1313} --poll 1000ms
+    restart: unless-stopped

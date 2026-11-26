@@ -1,0 +1,8 @@
+{{ define "main" }}
+{{ partial "page-title.html" . }}
+<div class="page-content{{ with .Params.justify }} page-content--justify-{{ . }}{{ end }}">
+  <div class="container">
+    {{ partial "page-body.html" . }}
+  </div>
+</div>
+{{ end }}

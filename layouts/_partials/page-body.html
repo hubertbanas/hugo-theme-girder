@@ -1,0 +1,55 @@
+{{/* The body of a page or section page. Front matter, all optional:
+       logo_image     a logo above the text (path under assets/), linked to
+                      logo_link; logo_in_column narrows it to a third
+       image          a photo beside the text (path under assets/)
+       intro          with image: Markdown shown beside the photo, with the
+                      page's content below the pair instead
+       facts          a list of short points (Markdown), under facts_heading
+       links          a list of {title, link}, under links_heading
+       figures        a list of {src, alt}: images (charts, diagrams) in two
+                      columns below the text
+       list_pages     true: list this section's pages at the end */}}
+{{ with .Params.logo_image }}
+  <div class="page-logo{{ if $.Params.logo_in_column }} page-logo--in-column{{ end }}">
+    {{ $logo := partial "img.html" (dict "src" . "alt" (or $.Params.logo_alt $.Title) "width" 300 "class" "page-logo__img") }}
+    {{ with $.Params.logo_link }}
+      <a href="{{ partial "link.html" . }}">{{ $logo }}</a>
+    {{ else }}
+      {{ $logo }}
+    {{ end }}
+  </div>
+{{ end }}
+
+{{ $main := partial "page-main-text.html" . }}
+{{ with .Params.image }}
+  <div class="prose-with-photo">
+    <div class="prose-with-photo__text">
+      {{ with $.Params.intro }}{{ . | $.RenderString (dict "display" "block") }}{{ else }}{{ $main }}{{ end }}
+    </div>
+    <div class="prose-with-photo__photo">
+      {{ partial "img.html" (dict "src" . "alt" ($.Params.image_alt | default "") "width" 450) }}
+    </div>
+  </div>
+  {{ with $.Params.intro }}{{ $main }}{{ end }}
+{{ else }}
+  {{ $main }}
+{{ end }}
+
+{{ with .Params.figures }}
+  <div class="figure-row">
+    {{ range . }}
+      {{ partial "img.html" (dict "src" .src "alt" .alt "width" 400) }}
+    {{ end }}
+  </div>
+{{ end }}
+
+{{ if and .Params.list_pages .IsSection }}
+  <ul class="page-list">
+    {{ range .Pages }}
+      <li class="page-list__item">
+        <h2 class="page-list__title"><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+        {{ with .Description }}<p>{{ . }}</p>{{ end }}
+      </li>
+    {{ end }}
+  </ul>
+{{ end }}

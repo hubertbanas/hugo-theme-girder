@@ -1,0 +1,29 @@
+# Hugo output and caches (the demo site builds into exampleSite/)
+public/
+resources/
+.hugo_build.lock
+hugo_stats.json
+
+# Node tools
+node_modules/
+
+# Local overrides for site.sh / compose.yaml (PORT, BIND)
+.env
+.env.*
+!.env.example
+
+# Local notes and assistant files, never part of the theme
+notes.md
+CLAUDE.md
+.claude/
+.playwright-cli/
+
+# Editors and OS
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db

@@ -1,0 +1,86 @@
+<header class="site-header">
+  <div class="site-header__top">
+    <div class="container">
+      <div class="site-header__top-inner">
+        {{/* The logo ([params] logo, a file under assets/; logo_dark, if set,
+             replaces it in the dark scheme), the site title, or both
+             ([params] show_title). */}}
+        {{ $showTitle := or (not site.Params.logo) site.Params.show_title }}
+        <a class="navbar__brand" href="{{ site.Home.RelPermalink }}">
+          {{ with site.Params.logo }}
+            {{ $dark := and site.Params.logo_dark (not (eq site.Params.dark_mode false)) }}
+            {{ range $i, $src := cond $dark (slice . site.Params.logo_dark) (slice .) }}
+              {{/* logo_height only for an SVG (for a photo, img.html would crop) */}}
+              {{ $opts := dict "src" $src "alt" (cond $showTitle "" site.Title) "width" site.Params.logo_width "eager" true }}
+              {{ if $dark }}{{ $opts = merge $opts (dict "class" (cond (eq $i 0) "navbar__logo--light" "navbar__logo--dark")) }}{{ end }}
+              {{ if strings.HasSuffix $src ".svg" }}{{ $opts = merge $opts (dict "height" site.Params.logo_height) }}{{ end }}
+              {{ partial "img.html" $opts }}
+            {{ end }}
+          {{ end }}
+          {{ if $showTitle }}<span class="navbar__brand-text">{{ site.Title }}</span>{{ end }}
+        </a>
+        {{/* The colour-scheme button: automatic (as the visitor's device),
+             light or dark. Shown by assets/js/color-scheme.js, so without
+             scripts there's no button and the scheme is automatic.
+             [params] dark_mode_toggle = false leaves it out. */}}
+        {{ $toggle := not (or (eq site.Params.dark_mode false) (eq site.Params.dark_mode_toggle false)) }}
+        {{ if or site.Params.social $toggle }}
+          <div class="social-icons">
+            {{ range site.Params.social }}
+              <a href="{{ .url }}" target="_blank" rel="noopener"><span class="sr-only">{{ .name }} (opens in a new tab)</span>{{ partial "icon.html" (.icon | default .name) }}</a>
+            {{ end }}
+            {{ if $toggle }}
+              <button type="button" class="scheme-toggle" aria-label="Colour scheme: automatic" hidden>
+                <span class="scheme-toggle__icon scheme-toggle__icon--auto">{{ partial "icon.html" "circle-half" }}</span>
+                <span class="scheme-toggle__icon scheme-toggle__icon--light">{{ partial "icon.html" "sun" }}</span>
+                <span class="scheme-toggle__icon scheme-toggle__icon--dark">{{ partial "icon.html" "moon" }}</span>
+              </button>
+              <span class="scheme-toggle__status sr-only" role="status"></span>
+            {{ end }}
+          </div>
+        {{ end }}
+        <button type="button" class="navbar__toggle" aria-controls="primary-menu" aria-expanded="false">
+          <span class="navbar__toggle-text">MENU</span>
+          <svg class="navbar__toggle-bars" viewBox="0 0 18 15" aria-hidden="true" focusable="false"><rect width="18" height="3" rx="1"/><rect y="6" width="18" height="3" rx="1"/><rect y="12" width="18" height="3" rx="1"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <nav class="navbar" aria-label="Primary">
+    <div class="container navbar__inner">
+      {{ $page := . }}
+      <ul id="primary-menu" class="navbar__menu">
+        {{ range site.Menus.main }}
+          {{/* The current page's link gets aria-current="page" (menu-link.html)
+               but no highlight: a menu item looks the same on every page.
+               navbar__item--active (the current page or its section) is a
+               hook for a site's own _custom.scss. */}}
+          {{ $active := or ($page.IsMenuCurrent "main" .) ($page.HasMenuCurrent "main" .) }}
+          <li class="navbar__item{{ if .HasChildren }} navbar__item--dropdown{{ end }}{{ if $active }} navbar__item--active{{ end }}">
+            {{ partial "menu-link.html" (dict "entry" . "page" $page "class" "navbar__link" "caret" .HasChildren) }}
+            {{ if .HasChildren }}
+              {{/* Phones only: opens and closes the submenu. */}}
+              <button type="button" class="navbar__caret" aria-label="Show {{ .Name }} submenu" aria-expanded="false">
+                <span class="navbar__caret-chevron">{{ partial "icon.html" "chevron-down" }}</span>
+              </button>
+              <ul class="navbar__submenu">
+                {{ range .Children }}
+                  <li{{ if .HasChildren }} class="navbar__subitem--dropdown"{{ end }}>
+                    {{ partial "menu-link.html" (dict "entry" . "page" $page) }}
+                    {{ if .HasChildren }}
+                      <ul class="navbar__submenu navbar__submenu--nested">
+                        {{ range .Children }}
+                          <li>{{ partial "menu-link.html" (dict "entry" . "page" $page) }}</li>
+                        {{ end }}
+                      </ul>
+                    {{ end }}
+                  </li>
+                {{ end }}
+              </ul>
+            {{ end }}
+          </li>
+        {{ end }}
+      </ul>
+    </div>
+  </nav>
+</header>

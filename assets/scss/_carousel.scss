@@ -1,0 +1,263 @@
+@use 'variables' as *;
+
+// Home page hero: a carousel of wide photos. On desktop the caption box
+// floats over the photo; on phones and tablets it sits below the photo in a
+// dark band. assets/js/carousel.js moves the slides; without it, the first
+// slide simply stays.
+.hero {
+  position: relative;
+  z-index: 1;
+  background: #999999;
+  margin: -37px 0 0;
+  padding: 0;
+}
+
+.carousel {
+  position: relative;
+
+  &__track {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  // One slide shows at a time. While moving, the outgoing and incoming
+  // slides are both shown and slide sideways together.
+  &__slide {
+    position: relative;
+    display: none;
+    transition: transform 0.6s ease-in-out;
+    backface-visibility: hidden;
+
+    &.is-active,
+    &.is-next,
+    &.is-prev {
+      display: block;
+    }
+
+    &.is-next,
+    &.is-prev {
+      position: absolute;
+      top: 0;
+      width: 100%;
+    }
+
+    &.is-next {
+      transform: translateX(100%);
+    }
+
+    &.is-prev {
+      transform: translateX(-100%);
+    }
+
+    &.is-next.is-entering,
+    &.is-prev.is-entering {
+      transform: translateX(0);
+    }
+
+    &.is-active.is-leaving-left {
+      transform: translateX(-100%);
+    }
+
+    &.is-active.is-leaving-right {
+      transform: translateX(100%);
+    }
+  }
+
+  &__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0;
+  }
+
+  &__caption {
+    position: absolute;
+    top: 18%;
+    left: 0;
+    right: 0;
+    width: 540px;
+    margin: 0 auto;
+    padding: 20px;
+    background: rgba(51, 51, 51, 0.9);
+  }
+
+  &__kicker {
+    position: relative;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(250, 250, 250, 0.2);
+    font-family: $font-heading;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 13.2px;
+    letter-spacing: -0.5px;
+    color: $color-primary-on-dark;
+
+    // A short bar over the start of the divider line.
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 30px;
+      height: 3px;
+      background: $color-primary;
+    }
+  }
+
+  &__heading {
+    margin: 21px 0 10.5px;
+    font-size: 24px;
+    line-height: 26.4px;
+    color: #f5f5f5;
+    text-align: center;
+
+    a {
+      color: inherit;
+    }
+  }
+
+  // Previous / next arrows, and the pause button.
+  &__control,
+  &__pause {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
+    background: rgba(51, 51, 51, 0.9);
+    color: $color-white;
+
+    &:hover,
+    &:focus-visible {
+      background: rgba(30, 30, 30, 0.95);
+      color: #eeeeee;
+    }
+  }
+
+  &__control {
+    top: 50%;
+    margin-top: -22px;
+
+    &--prev {
+      left: 5%;
+    }
+
+    &--next {
+      right: 5%;
+    }
+  }
+
+  &__arrow {
+    display: block;
+    width: 45px;
+    height: 45px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  // Centred under the previous arrow ((45px - 32px) / 2 in from its edge).
+  &__pause {
+    bottom: 20px;
+    left: calc(5% + 6.5px);
+    width: 32px;
+    height: 32px;
+
+    // As blocks, so the icon is centred in the button rather than set on a
+    // text baseline (which leaves room for descenders below it).
+    svg {
+      display: block;
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+  }
+
+  &__pause-icon {
+    display: block;
+  }
+
+  // Shows the pause icon while playing, the play icon while paused.
+  &__pause-icon--play,
+  &.is-paused &__pause-icon--pause {
+    display: none;
+  }
+
+  &.is-paused &__pause-icon--play {
+    display: block;
+  }
+}
+
+@media (min-width: 1200px) {
+  .carousel__caption {
+    top: 20%;
+    width: 500px;
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  // Phones and tablets: the hero starts below the header, and the caption
+  // sits in a dark band under the photo.
+  .hero {
+    margin-top: 0;
+    padding-bottom: 30px;
+    background: $color-dark;
+  }
+
+  .carousel__caption {
+    position: static;
+    width: auto;
+    padding: 0 15px;
+    background: none;
+  }
+
+  .carousel__kicker {
+    margin-top: 30px;
+  }
+
+  // The controls are centred on the photo, not on the photo and the caption
+  // band below it. A percentage margin is a share of the carousel's width,
+  // which is also the photo's, so ratio x 50% is half the photo's height.
+  .carousel__control {
+    top: 0;
+    margin-top: calc(#{$hero-ratio * 50%} - 22.5px);
+  }
+
+  // As on desktop: under the previous arrow, 20px above the bottom of the
+  // photo (not of the caption band). Ratio x 100% is the photo's height.
+  .carousel__pause {
+    top: 0;
+    bottom: auto;
+    margin-top: calc(#{$hero-ratio * 100%} - 52px);
+  }
+}
+
+@media (max-width: 767px) {
+  .hero {
+    padding-bottom: 20px;
+  }
+
+  // Phones: the photo is too short for an arrow centred on it with the
+  // pause button below, so the pause button sits 8px above the photo's
+  // bottom, and the arrows are centred in the space above it.
+  .carousel__control {
+    margin-top: calc(#{$hero-ratio * 50%} - 42.5px);
+  }
+
+  .carousel__pause {
+    margin-top: calc(#{$hero-ratio * 100%} - 40px);
+  }
+
+  .carousel__kicker {
+    margin-top: 20px;
+    padding-bottom: 10px;
+  }
+}

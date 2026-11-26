@@ -1,0 +1,57 @@
+{{/* The theme's one stylesheet, from assets/scss/main.scss (Dart Sass).
+
+     Colours: two palettes, light and dark, handed to the Sass as hugo:vars
+     (light-<key> and dark-<key>; _colors.scss turns them into CSS custom
+     properties). Each is the theme's defaults, replaced by any colour the
+     site sets in [params.colors] or [params.colors_dark]. The dark palette's
+     primary colours follow the light ones unless set, and "link" set to
+     "auto" means: the primary colour (light), or the dark palette's primary
+     colour lightened (dark). [params] dark_mode = false leaves out the dark
+     palette, so the site is always light.
+
+     Web fonts: their files are published with a hash in their names
+     (asset.html), so their URLs go in as hugo:vars too (font-<file name>,
+     see _fonts.scss).
+
+     The hero's shape: hero-ratio, its height over its width (the same as
+     hero-carousel.html's crop), to centre the carousel controls on the photo. */}}
+{{ $light := dict
+  "primary" "#2f6b3a"
+  "primary-dark" "#265830"
+  "link" "auto"
+  "text" "#333333"
+  "muted" "#666666"
+  "background" "#ffffff"
+  "surface" "#f2f2f2"
+  "dark" "#333333"
+}}
+{{ range $key, $value := site.Params.colors }}
+  {{ $light = merge $light (dict (replace $key "_" "-") $value) }}
+{{ end }}
+{{ $dark := dict
+  "primary" (index $light "primary")
+  "primary-dark" (index $light "primary-dark")
+  "link" "auto"
+  "text" "#e8e8e8"
+  "muted" "#b0b0b0"
+  "background" "#1f1f1f"
+  "surface" "#2a2a2a"
+  "dark" "#141414"
+}}
+{{ range $key, $value := site.Params.colors_dark }}
+  {{ $dark = merge $dark (dict (replace $key "_" "-") $value) }}
+{{ end }}
+{{ $vars := dict "dark-mode" (cond (eq site.Params.dark_mode false) 0 1) }}
+{{ range $key, $value := $light }}
+  {{ $vars = merge $vars (dict (printf "light-%s" $key) $value) }}
+{{ end }}
+{{ range $key, $value := $dark }}
+  {{ $vars = merge $vars (dict (printf "dark-%s" $key) $value) }}
+{{ end }}
+{{ $vars = merge $vars (dict "hero-ratio" (div (float (site.Params.hero_height | default 580)) (site.Params.hero_width | default 1920))) }}
+{{ range resources.Match "vendor/fonts/*/*.woff2" }}
+  {{ $vars = merge $vars (dict (printf "font-%s" (path.BaseName .Name)) (css.Quoted (partial "asset.html" .Name).RelPermalink)) }}
+{{ end }}
+{{ $options := dict "transpiler" "dartsass" "vars" $vars "outputStyle" "compressed" "targetPath" "css/main.css" }}
+{{ $css := resources.Get "scss/main.scss" | css.Sass $options | resources.Fingerprint }}
+{{ return $css }}

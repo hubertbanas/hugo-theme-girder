@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "davidanson.vscode-markdownlint",
+    "streetsidesoftware.code-spell-checker",
+    "tamasfe.even-better-toml",
+    "hugoblox.hugo"
+  ]
+}

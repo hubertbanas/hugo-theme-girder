@@ -1,0 +1,19 @@
+{{/* Resolves a link given in front matter or site config. A page path
+     ("/services/", "about/history") becomes that page's URL; a path no page
+     has is made relative to the site's base URL; anything else (https://…,
+     mailto:…, tel:…, #…) is used as given. This keeps links working when the
+     site lives under a sub-path, such as a GitHub Pages project site. */}}
+{{ $dest := . | default "" }}
+{{ $url := $dest }}
+{{ $u := urls.Parse $dest }}
+{{ if and (not $u.IsAbs) (not (hasPrefix $dest "#")) (not (hasPrefix $dest "//")) }}
+  {{ $path := strings.TrimSuffix "/" $u.Path | default "/" }}
+  {{ with site.GetPage $path }}
+    {{ $url = .RelPermalink }}
+  {{ else }}
+    {{ $url = strings.TrimPrefix "/" $u.Path | relURL }}
+  {{ end }}
+  {{ with $u.RawQuery }}{{ $url = printf "%s?%s" $url . }}{{ end }}
+  {{ with $u.Fragment }}{{ $url = printf "%s#%s" $url . }}{{ end }}
+{{ end }}
+{{ return $url }}

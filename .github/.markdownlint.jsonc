@@ -1,0 +1,6 @@
+// The repo's rules (../.markdownlint.jsonc), except that templates may start
+// at a ## heading or with front matter.
+{
+  "extends": "../.markdownlint.jsonc",
+  "MD041": false,
+}

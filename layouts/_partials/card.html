@@ -1,0 +1,15 @@
+{{/* A home page card: title, text, and an optional small picture. The picture
+     links to the same place as the title, so it's left out of the tab order
+     and hidden from screen readers. */}}
+{{ $url := partial "link.html" .link }}
+<div class="page-box">
+  {{ with .image }}
+    <a href="{{ $url }}" class="page-box__picture" tabindex="-1" aria-hidden="true">
+      {{ partial "img.html" (dict "src" . "alt" "" "width" 100 "height" 75) }}
+    </a>
+  {{ end }}
+  <div class="page-box__content">
+    <h3 class="page-box__title"><a href="{{ $url }}">{{ .title }}</a></h3>
+    <p>{{ .text }}</p>
+  </div>
+</div>

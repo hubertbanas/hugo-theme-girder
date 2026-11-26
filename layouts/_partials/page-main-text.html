@@ -1,0 +1,18 @@
+{{/* The page's content, then its facts and links lists (see page-body.html). */}}
+{{ .Content }}
+{{ with .Params.facts }}
+  <h2>{{ $.Params.facts_heading | default "Quick facts" }}</h2>
+  <ul>
+    {{ range . }}
+      <li>{{ . | $.RenderString }}</li>
+    {{ end }}
+  </ul>
+{{ end }}
+{{ with .Params.links }}
+  <h2>{{ $.Params.links_heading | default "Learn more" }}</h2>
+  <ul class="link-list">
+    {{ range . }}
+      <li><a href="{{ partial "link.html" .link }}">{{ .title }}</a></li>
+    {{ end }}
+  </ul>
+{{ end }}

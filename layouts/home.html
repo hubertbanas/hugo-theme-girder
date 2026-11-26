@@ -1,0 +1,107 @@
+{{/* The home page, built from its front matter (all optional):
+       slides        the hero carousel (see _partials/hero-carousel.html)
+       tagline       a line of text in a band under the hero, with
+       buttons       [{label, link, style}] beside it (style: primary or
+                     default)
+       featured      {heading, image, image_dark, link, alt}: an image
+                     block (image_dark, if set, replaces it in the dark
+                     scheme), beside
+       cards         [{title, text, image, link}]: small linked cards
+       banner        a line of text in a full-width coloured band
+       logos         [{image, name, link, width, height}]: a grid of logos,
+                     four to a row
+     and then the page's own content, if it has any. */}}
+{{ define "main" }}
+<h1 class="sr-only">{{ site.Title }}</h1>
+{{ with .Params.slides }}{{ partial "hero-carousel.html" $ }}{{ end }}
+
+{{ with .Params.tagline }}
+<section class="tagline-band" aria-label="Introduction">
+  <div class="container">
+    <div class="tagline-band__inner">
+      <p class="tagline-band__text">{{ . }}</p>
+      {{ with $.Params.buttons }}
+        <div class="tagline-band__ctas">
+          {{ range . }}
+            <a class="btn btn-{{ .style | default "primary" }}" href="{{ partial "link.html" .link }}">{{ .label }}</a>
+          {{ end }}
+        </div>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}
+
+<div class="home-content">
+  {{ if or .Params.featured .Params.cards }}
+    <div class="container">
+      <div class="home-grid">
+        {{ with .Params.featured }}
+          <div class="home-grid__cell home-grid__cell--featured">
+            {{ with .heading }}
+              <div class="home-widget">
+                <h2 class="home-grid__heading">{{ . }}</h2>
+              </div>
+            {{ end }}
+            {{ with .image }}
+              <div class="home-widget">
+                {{ $alt := $.Params.featured.alt | default "" }}
+                {{ $dark := and $.Params.featured.image_dark (not (eq site.Params.dark_mode false)) }}
+                {{ $img := partial "img.html" (dict "src" . "alt" $alt "class" (cond $dark "home-widget__img home-widget__img--light" "home-widget__img") "width" 360) }}
+                {{ if $dark }}
+                  {{ $img = printf "%s%s" $img (partial "img.html" (dict "src" $.Params.featured.image_dark "alt" $alt "class" "home-widget__img home-widget__img--dark" "width" 360)) | safeHTML }}
+                {{ end }}
+                {{ with $.Params.featured.link }}<a href="{{ partial "link.html" . }}">{{ $img }}</a>{{ else }}{{ $img }}{{ end }}
+              </div>
+            {{ end }}
+          </div>
+        {{ end }}
+        {{ with .Params.cards }}
+          <div class="home-grid__cell home-grid__cell--cards">
+            {{ range . }}
+              <div class="home-widget">{{ partial "card.html" . }}</div>
+            {{ end }}
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+
+  {{ with .Params.banner }}
+    <div class="banner-band">
+      <div class="container">
+        <p class="banner-band__text">{{ . }}</p>
+      </div>
+    </div>
+  {{ end }}
+
+  {{ with .Params.logos }}
+    <div class="container">
+      <div class="home-grid home-grid--logos">
+        {{ range . }}
+          {{/* height only for an SVG (for a photo, img.html would crop to it) */}}
+          {{ $opts := dict "src" .image "alt" .name "class" "home-widget__img" "width" (.width | default 165) }}
+          {{ if strings.HasSuffix .image ".svg" }}{{ $opts = merge $opts (dict "height" .height) }}{{ end }}
+          {{ $img := partial "img.html" $opts }}
+          <div class="home-widget">
+            {{ with .link }}<a href="{{ partial "link.html" . }}">{{ $img }}</a>{{ else }}{{ $img }}{{ end }}
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+
+  {{ with .Content }}
+    <div class="page-content">
+      <div class="container">{{ . }}</div>
+    </div>
+  {{ end }}
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+{{ if gt (len .Params.slides) 1 }}
+  {{ $carousel := resources.Get "js/carousel.js" | resources.Minify | resources.Fingerprint }}
+<script src="{{ $carousel.RelPermalink }}" integrity="{{ $carousel.Data.Integrity }}"></script>
+{{ end }}
+{{ end }}

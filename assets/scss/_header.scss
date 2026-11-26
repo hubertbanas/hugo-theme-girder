@@ -1,0 +1,575 @@
+@use 'variables' as *;
+
+.site-header {
+  position: relative;
+  z-index: 2;
+
+  &__top {
+    background: $color-background;
+  }
+
+  &__top-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+}
+
+// The logo, the site title beside it, or both.
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 112px;
+  color: $color-text;
+
+  // Shown at its width attribute ([params] logo_width).
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  &:hover {
+    color: $color-text;
+    text-decoration: none;
+  }
+}
+
+// With [params] logo_dark: one logo for each scheme. Inside .navbar__brand,
+// so these win over its `img { display: block }`.
+.navbar__brand .navbar__logo--dark {
+  display: none;
+
+  @include dark {
+    display: block;
+  }
+}
+
+.navbar__brand .navbar__logo--light {
+  @include dark {
+    display: none;
+  }
+}
+
+.navbar__brand-text {
+  font-family: $font-heading;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+}
+
+.social-icons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  order: 3;
+
+  a {
+    display: inline-flex;
+    padding: 4px 8px;
+    color: $color-link;
+    transition: color 150ms ease-out;
+
+    &:hover {
+      color: $color-link-hover;
+    }
+  }
+
+  svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+}
+
+// The colour-scheme button, after the social links: its icon shows the
+// current setting (automatic, light or dark; color-scheme.js).
+.scheme-toggle {
+  display: inline-flex;
+  padding: 4px 8px;
+  border: 0;
+  background: none;
+  color: $color-link;
+  cursor: pointer;
+  transition: color 150ms ease-out;
+
+  &:hover {
+    color: $color-link-hover;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.scheme-toggle__icon {
+  display: none;
+}
+
+:root:not([data-color-scheme]) .scheme-toggle__icon--auto,
+:root[data-color-scheme='light'] .scheme-toggle__icon--light,
+:root[data-color-scheme='dark'] .scheme-toggle__icon--dark {
+  display: block;
+}
+
+.navbar__toggle {
+  display: inline-flex;
+  align-items: center;
+  background: $color-primary;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  padding: 10px 12px;
+  color: $color-white;
+}
+
+.navbar__toggle-text {
+  padding-right: 10px;
+  font-family: $font-heading;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 21px;
+}
+
+// Three 3px bars, 3px apart (an inline SVG in currentColor, so it also shows
+// in forced-colours mode).
+.navbar__toggle-bars {
+  display: block;
+  width: 18px;
+  height: 15px;
+  margin-left: 3px;
+  fill: currentColor;
+}
+
+.navbar {
+  &__inner {
+    background: linear-gradient(to bottom, $color-nav-start, $color-nav-end);
+    box-shadow: 0 0 4px $color-nav-shadow;
+  }
+
+  &__menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    list-style: none;
+    margin: 0;
+    padding: 14px 0;
+  }
+
+  &__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    // A faint divider between the top-level links.
+    &:not(:last-child) .navbar__link::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      margin-top: -8px;
+      width: 1px;
+      height: 15px;
+      background: $color-border;
+    }
+  }
+
+  &__link {
+    display: block;
+    position: relative;
+    padding: 12px 20px;
+    font-family: $font-heading;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 21px;
+    color: $color-muted;
+
+    &:hover {
+      color: $color-text;
+      text-decoration: none;
+    }
+  }
+
+  &__caret {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 8px 4px 8px 0;
+    margin-left: -14px;
+    color: $color-muted;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  &__caret-chevron,
+  &__caret-triangle {
+    display: none;
+  }
+
+  &__submenu {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 180px;
+    z-index: 20;
+
+    li a {
+      display: block;
+      padding: 12px 30px;
+      background: $color-primary;
+      color: $color-white;
+      font-family: $font-body;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 21px;
+      white-space: nowrap;
+      border-bottom: 1px solid $color-primary-dark;
+      text-decoration: none;
+
+      &:hover {
+        background: $color-primary-dark;
+        text-decoration: none;
+      }
+    }
+  }
+
+  &__item--dropdown:hover > &__submenu,
+  &__item--dropdown:focus-within > &__submenu {
+    display: block;
+  }
+
+  &__submenu.is-open {
+    display: block;
+  }
+
+  // Third level: a flyout beside its parent item, which stays highlighted
+  // while the flyout is open.
+  &__subitem--dropdown {
+    position: relative;
+
+    &:hover > a,
+    &:focus-within > a {
+      background: $color-primary-dark;
+    }
+  }
+
+  &__submenu--nested {
+    top: 0;
+    left: 100%;
+  }
+
+  &__subitem--dropdown:hover > &__submenu--nested,
+  &__subitem--dropdown:focus-within > &__submenu--nested {
+    display: block;
+  }
+}
+
+@media (min-width: #{$breakpoint-mobile + 1}) {
+  .social-icons {
+    justify-content: flex-start;
+    width: auto;
+    order: 0;
+    margin-left: auto;
+  }
+
+  .navbar__toggle {
+    display: none;
+  }
+
+  .navbar__menu {
+    padding: 0;
+  }
+
+  .navbar__link {
+    padding: 27px 30px;
+
+    &:hover {
+      border-top: 3px solid $color-primary;
+      padding-top: 24px;
+    }
+  }
+
+  // On desktop a submenu opens on hover and on keyboard focus, so the
+  // phone menu's submenu buttons aren't needed.
+  .navbar__caret {
+    display: none;
+  }
+
+  // A small rounded triangle under each link that has a submenu (drawn
+  // inside the link, decorative only).
+  .navbar__caret-triangle {
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: 16.75px;
+    transform: translateX(calc(-50% + 1px));
+    width: 10px;
+    height: 6.5px;
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      fill: currentColor;
+      stroke: currentColor;
+      stroke-width: 1;
+      stroke-linejoin: round;
+    }
+  }
+
+  .navbar__inner {
+    width: 940px;
+  }
+
+  .navbar__item:last-child {
+    margin-right: -4px;
+  }
+
+  .navbar__submenu {
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 200ms ease,
+      visibility 200ms ease;
+  }
+
+  .navbar__item--dropdown:hover > .navbar__submenu,
+  .navbar__item--dropdown:focus-within > .navbar__submenu,
+  .navbar__subitem--dropdown:hover > .navbar__submenu--nested,
+  .navbar__subitem--dropdown:focus-within > .navbar__submenu--nested {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  // Closed with Escape (nav.js): stays shut, even while hovered or focused,
+  // until the pointer and focus have left it.
+  .navbar__item--dropdown.is-dismissed > .navbar__submenu,
+  .navbar__subitem--dropdown.is-dismissed > .navbar__submenu--nested {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@media (min-width: #{$breakpoint-mobile + 1}) and (max-width: 1199px) {
+  // Stacked header: logo centred, social icons centred below it, then the
+  // navigation with narrower links.
+  .site-header__top-inner {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .social-icons {
+    margin-left: 0;
+    padding: 25px 0 40.5px;
+  }
+
+  .navbar__link {
+    padding: 27px 22px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .navbar__inner {
+    width: 1140px;
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  // Phones: logo and MENU button on one row, the opened menu right below
+  // them on plain white, then the social icons. The header's wrappers step
+  // aside (display: contents) so those four can be ordered as siblings
+  // without repeating the social links in the markup.
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 0 15px;
+    background: $color-background;
+  }
+
+  .site-header__top,
+  .site-header__top > .container,
+  .site-header__top-inner {
+    display: contents;
+  }
+
+  // The logo only shrinks to fit its part of the row.
+  .navbar__brand {
+    order: 1;
+    max-width: 60%;
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
+  .navbar__brand-text {
+    font-size: 24px;
+  }
+
+  .navbar__toggle {
+    order: 2;
+    margin-top: 34px;
+  }
+
+  .social-icons {
+    order: 4;
+    padding: 21px 0 22.5px;
+  }
+
+  .navbar {
+    order: 3;
+    width: 100%;
+  }
+
+  .navbar__inner {
+    width: auto;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .navbar__menu {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    padding: 10px;
+    border-top: 1px solid transparent;
+
+    &.is-open {
+      display: flex;
+    }
+  }
+
+  .navbar__item {
+    flex-direction: column;
+    align-items: stretch;
+
+    &:not(:last-child) .navbar__link::after {
+      display: none;
+    }
+  }
+
+  .navbar__link {
+    padding: 6px 10px 6px 0;
+    background: none;
+    color: $color-muted;
+  }
+
+  .navbar__link:hover {
+    color: $color-text;
+  }
+
+  // Only the toggle opens and closes a submenu on phones. The desktop
+  // dropdown's hover/focus-within rules would keep it open after a second
+  // tap, since the tapped toggle keeps focus.
+  .navbar__item--dropdown:hover > .navbar__submenu,
+  .navbar__item--dropdown:focus-within > .navbar__submenu {
+    display: none;
+  }
+
+  .navbar__item--dropdown > .navbar__submenu.is-open {
+    display: block;
+  }
+
+  // Submenus are plain text indented under their parent, not the desktop
+  // dropdown's coloured panel.
+  .navbar__submenu {
+    position: static;
+    box-shadow: none;
+    padding: 5px 10px;
+
+    li a,
+    li a:hover {
+      padding: 3px 0;
+      background: none;
+      border-bottom: 0;
+      color: $color-muted;
+      white-space: normal;
+    }
+
+    li a:hover {
+      color: $color-text;
+    }
+  }
+
+  .navbar__subitem--dropdown:hover > a,
+  .navbar__subitem--dropdown:focus-within > a {
+    background: none;
+  }
+
+  // The third level is listed, indented again, under its parent.
+  .navbar__submenu--nested {
+    display: block;
+    padding: 0 0 0 10px;
+  }
+
+  .navbar__caret {
+    position: absolute;
+    top: 0;
+    right: -9px;
+    width: 35px;
+    height: 33px;
+    margin-left: 0;
+    padding: 0;
+    background: $color-primary;
+    color: $color-white;
+  }
+
+  .navbar__caret-triangle {
+    display: none;
+  }
+
+  // A chevron that points up while its submenu is open.
+  .navbar__caret-chevron {
+    display: block;
+    width: 14px;
+    height: 14px;
+    transition: transform 150ms ease;
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .navbar__caret[aria-expanded='true'] .navbar__caret-chevron {
+    transform: rotate(180deg);
+  }
+}
+
+// Between 768px and the desktop navigation, the header lines up with the
+// 750px container.
+@media (min-width: 768px) and (max-width: $breakpoint-mobile) {
+  .site-header {
+    padding: 0 calc((100% - 750px) / 2 + 15px);
+  }
+}
+
+@media (max-width: 767px) {
+  .navbar__toggle {
+    margin-top: 10px;
+  }
+
+  .navbar__brand {
+    min-height: 0;
+  }
+}

@@ -1,0 +1,191 @@
+# The Girder theme's demo site. Every setting the theme reads is shown here.
+# From the repo root: ./site.sh start (Docker), or
+#   hugo server --source exampleSite --themesDir ../..
+baseURL = "https://example.org/"
+title = "Girder"
+theme = "hugo-theme-girder"
+# Look for the theme in the folder above the repo, which is the repo itself.
+themesDir = "../.."
+enableRobotsTXT = true
+disableKinds = ["taxonomy", "term", "rss"]
+
+[params]
+  description = "Girder, a Hugo theme for company sites. Demo content: lorem ipsum."
+
+  # Header: a logo (a file under assets/) and/or the site title beside it.
+  # An SVG needs both its width and height; a photo or PNG only its width.
+  logo = "images/logo.svg"
+  logo_width = 64
+  logo_height = 64
+  show_title = true
+  # A logo for the dark scheme, if the main one doesn't show well on dark.
+  logo_dark = "images/logo-dark.svg"
+
+  # Dark mode: the site follows the visitor's device (light or dark), and a
+  # button in the header picks automatic, light or dark. dark_mode = false
+  # keeps the site light; dark_mode_toggle = false keeps dark mode but drops
+  # the button.
+  dark_mode = true
+  dark_mode_toggle = true
+
+  # Icons, from the site's static/ folder.
+  favicon = "favicon.svg"
+  apple_touch_icon = "apple-touch-icon.png"
+
+  # Footer text; {year} becomes the current year. Markdown is allowed.
+  copyright = "© {year} Girder Demo Co. All content is placeholder text."
+
+  # The hero photos are cropped to this shape (default 1920 x 580).
+  hero_width = 1920
+  hero_height = 580
+
+  # Social links in the header. icon: x, linkedin, facebook, github,
+  # instagram or youtube (default: the name, lower-cased).
+  [[params.social]]
+    name = "GitHub"
+    url = "https://github.com/hubertbanas/hugo-theme-girder"
+  [[params.social]]
+    name = "LinkedIn"
+    url = "https://www.linkedin.com/"
+  [[params.social]]
+    name = "X"
+    url = "https://x.com/"
+
+  # Colours; any not set keep the theme's default (shown here). primary is
+  # the background of buttons, menus and the footer (under white text), link
+  # the colour of links ("auto": the primary colour), text the headings',
+  # muted the body text's, background the page's, surface the title band's
+  # and code's, dark the band under the hero on phones.
+  [params.colors]
+    primary = "#2f6b3a"
+    primary_dark = "#265830"
+    link = "auto"
+    text = "#333333"
+    muted = "#666666"
+    background = "#ffffff"
+    surface = "#f2f2f2"
+    dark = "#333333"
+
+  # The same for the dark scheme. primary and primary_dark default to the
+  # light ones above; link "auto" is the primary colour lightened.
+  [params.colors_dark]
+    link = "auto"
+    text = "#e8e8e8"
+    muted = "#b0b0b0"
+    background = "#1f1f1f"
+    surface = "#2a2a2a"
+    dark = "#141414"
+
+  # Contact page (layout: contact) details.
+  [params.contact]
+    heading = "Contact us"
+    title = "Head office"
+    address = ["Girder Demo Co.", "123 Example Street", "Springfield, ST 00000"]
+    email = "hello@example.com"
+    hours = ["Monday - Friday 8:00 am - 5:00 pm", "Saturday - Sunday closed"]
+    [[params.contact.phones]]
+      label = "Phone"
+      number = "555 0100"
+    [[params.contact.phones]]
+      label = "Fax"
+      number = "555 0199"
+      icon = "fax"
+
+  # Contact page map, drawn with Leaflet on OpenStreetMap's tiles (whose
+  # usage policy needs the attribution and a Referer header). Optional:
+  # tiles, attribution, zoom (15), title, pin (a marker image under assets/),
+  # snapshot (a picture of the map under assets/, shown until it loads).
+  [params.map]
+    lat = 51.47788
+    lng = -0.00147
+    zoom = 15
+    title = "Head office"
+    label = "Map of the head office"
+
+[menus]
+  [[menus.main]]
+    name = "Home"
+    pageRef = "/"
+    weight = 10
+
+  [[menus.main]]
+    identifier = "services"
+    name = "Services"
+    pageRef = "/services"
+    weight = 20
+  [[menus.main]]
+    name = "Structural Design"
+    pageRef = "/services/structural-design"
+    parent = "services"
+    weight = 1
+  [[menus.main]]
+    name = "Project Management"
+    pageRef = "/services/project-management"
+    parent = "services"
+    weight = 2
+  [[menus.main]]
+    name = "Inspection"
+    pageRef = "/services/inspection"
+    parent = "services"
+    weight = 3
+  [[menus.main]]
+    name = "Consulting"
+    pageRef = "/services/consulting"
+    parent = "services"
+    weight = 4
+
+  [[menus.main]]
+    name = "Projects"
+    pageRef = "/projects"
+    weight = 30
+
+  [[menus.main]]
+    identifier = "about"
+    name = "About"
+    pageRef = "/about"
+    weight = 40
+  [[menus.main]]
+    name = "History"
+    pageRef = "/about/history"
+    parent = "about"
+    weight = 1
+  [[menus.main]]
+    name = "Values"
+    pageRef = "/about/values"
+    parent = "about"
+    weight = 2
+  [[menus.main]]
+    identifier = "offices"
+    name = "Offices"
+    pageRef = "/about/offices"
+    parent = "about"
+    weight = 3
+  [[menus.main]]
+    name = "North Office"
+    pageRef = "/about/offices/north"
+    parent = "offices"
+    weight = 1
+  [[menus.main]]
+    name = "South Office"
+    pageRef = "/about/offices/south"
+    parent = "offices"
+    weight = 2
+
+  [[menus.main]]
+    name = "Elements"
+    pageRef = "/elements"
+    weight = 50
+
+  [[menus.main]]
+    name = "Contact"
+    pageRef = "/contact"
+    weight = 60
+
+  [[menus.footer]]
+    name = "Credits"
+    pageRef = "/credits"
+    weight = 1
+  [[menus.footer]]
+    name = "Theme on GitHub"
+    url = "https://github.com/hubertbanas/hugo-theme-girder"
+    weight = 2

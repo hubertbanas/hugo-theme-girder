@@ -1,0 +1,38 @@
+{{ define "main" }}
+{{ partial "page-title.html" . }}
+<div class="page-content{{ with .Params.justify }} page-content--justify-{{ . }}{{ end }}">
+  <div class="container">
+    {{/* The page bundle's photos, in file name order. Each one's caption is
+         its title (front matter resources: title). The first sits beside
+         the text, the rest go in the grid below. */}}
+    {{ $images := .Resources.ByType "image" }}
+    {{ if $images }}
+      {{ $first := index $images 0 }}
+      <div class="prose-with-photo">
+        <div class="prose-with-photo__text">
+          {{ .Content }}
+        </div>
+        <div class="prose-with-photo__photo">
+          <a href="{{ ($first | resources.Fingerprint).RelPermalink }}" class="glightbox" data-gallery="gallery" data-title="{{ $first.Title }}">
+            {{ partial "img.html" (dict "image" $first "alt" $first.Title "width" 450) }}
+          </a>
+        </div>
+      </div>
+      {{ partial "gallery-grid.html" (dict "images" (after 1 $images)) }}
+    {{ else }}
+      {{ .Content }}
+    {{ end }}
+  </div>
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+{{ with partial "asset.html" "vendor/glightbox/glightbox.min.css" }}
+<link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}">
+{{ end }}
+{{ with partial "asset.html" "vendor/glightbox/glightbox.min.js" }}
+<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}"></script>
+{{ end }}
+{{ $gallery := resources.Get "js/gallery.js" | resources.Minify | resources.Fingerprint }}
+<script src="{{ $gallery.RelPermalink }}" integrity="{{ $gallery.Data.Integrity }}"></script>
+{{ end }}

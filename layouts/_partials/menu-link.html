@@ -1,0 +1,5 @@
+{{/* One menu entry's link. Entries with pageRef link to that page (and work
+     under a sub-path); links to other sites open in a new tab. */}}
+{{ $entry := .entry }}
+{{ $external := hasPrefix $entry.URL "http" }}
+<a href="{{ $entry.URL }}"{{ with .class }} class="{{ . }}"{{ end }}{{ if .page.IsMenuCurrent $entry.Menu $entry }} aria-current="page"{{ end }}{{ if $external }} target="_blank" rel="noopener"{{ end }}>{{ $entry.Name }}{{ if $external }}<span class="sr-only"> (opens in a new tab)</span>{{ end }}{{ if .caret }}<span class="navbar__caret-triangle" aria-hidden="true"><svg viewBox="6 0 10 6.5" focusable="false"><polygon points="6.875,1 15.125,1 11,5.125"/></svg></span>{{ end }}</a>

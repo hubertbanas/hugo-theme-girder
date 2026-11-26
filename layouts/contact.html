@@ -1,0 +1,62 @@
+{{/* layout: contact. A map ([params.map]) under the title, then the contact
+     details ([params.contact]) and the page's own content. */}}
+{{ define "main" }}
+{{ partial "page-title.html" . }}
+{{ with site.Params.map }}
+  {{ $leafletCss := partial "asset.html" "vendor/leaflet/leaflet.css" }}
+  {{ $leafletJs := partial "asset.html" "vendor/leaflet/leaflet.js" }}
+  {{ $tiles := .tiles | default "https://tile.openstreetmap.org/{z}/{x}/{y}.png" }}
+  {{ $attribution := .attribution | default `© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors` }}
+  <div class="contact-map-band">
+    <div class="contact-map" id="contact-map" role="region" aria-label="{{ .label | default "Map" }}"
+         data-lat="{{ .lat }}" data-lng="{{ .lng }}" data-zoom="{{ .zoom | default 15 }}"
+         data-tiles="{{ $tiles }}" data-attribution="{{ $attribution }}" data-title="{{ .title | default site.Title }}"
+         {{- with .pin }}{{ with resources.Get . }} data-pin="{{ (. | resources.Fingerprint).RelPermalink }}" data-pin-width="{{ .Width }}" data-pin-height="{{ .Height }}"{{ end }}{{ end }}
+         data-leaflet-css="{{ $leafletCss.RelPermalink }}" data-leaflet-css-integrity="{{ $leafletCss.Data.Integrity }}"
+         data-leaflet-js="{{ $leafletJs.RelPermalink }}" data-leaflet-js-integrity="{{ $leafletJs.Data.Integrity }}">
+      {{/* An optional picture of the map ([params.map] snapshot), shown at
+           once; contact-map.js draws the live map on top after the page has
+           loaded. */}}
+      {{ with .snapshot }}
+        {{ partial "img.html" (dict "src" . "alt" "" "class" "contact-map__snapshot" "eager" true) }}
+      {{ end }}
+      <p class="contact-map__credit">{{ $attribution | safeHTML }}</p>
+      <noscript>
+        <a href="https://www.openstreetmap.org/?mlat={{ .lat }}&amp;mlon={{ .lng }}#map={{ .zoom | default 15 }}/{{ .lat }}/{{ .lng }}">View the map on OpenStreetMap</a>
+      </noscript>
+    </div>
+  </div>
+{{ end }}
+<div class="page-content">
+  <div class="container">
+    <div class="contact-section">
+      {{ with site.Params.contact }}
+        <h2 class="contact-section__title">{{ .heading | default "Contact us" }}</h2>
+        <p class="contact-details">
+          {{- with .address }}
+            <span class="contact-details__icon">{{ partial "icon.html" "home" }}</span>{{ with site.Params.contact.title }}<b>{{ . }}</b><br>{{ end }}
+            {{ range $i, $line := . }}{{ if $i }}<br>{{ end }}{{ $line }}{{ end }}<br><br>
+          {{- end }}
+          {{- range .phones }}
+            <span class="contact-details__icon">{{ partial "icon.html" (.icon | default "phone") }}</span><span class="sr-only">{{ .label }}: </span><b>{{ .number }}</b><br>
+          {{- end }}
+          {{- with .email }}
+            <span class="contact-details__icon">{{ partial "icon.html" "envelope" }}</span><span class="sr-only">Email: </span><a href="mailto:{{ . }}">{{ . }}</a><br>
+          {{- end }}
+          {{- with .hours }}
+            <br><span class="contact-details__icon">{{ partial "icon.html" "clock" }}</span><span class="sr-only">Opening hours: </span>{{ range $i, $line := . }}{{ if $i }}<br>{{ end }}{{ if eq $i 0 }}<b>{{ $line }}</b>{{ else }}{{ $line }}{{ end }}{{ end }}
+          {{- end }}
+        </p>
+      {{ end }}
+      {{ .Content }}
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+{{ if site.Params.map }}
+  {{ $map := resources.Get "js/contact-map.js" | resources.Minify | resources.Fingerprint }}
+<script src="{{ $map.RelPermalink }}" integrity="{{ $map.Data.Integrity }}"></script>
+{{ end }}
+{{ end }}

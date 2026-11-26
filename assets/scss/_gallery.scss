@@ -1,0 +1,34 @@
+@use 'variables' as *;
+
+// Photo gallery (layout: gallery): square thumbnails, four to a row (two on
+// phones and tablets); GLightbox opens the full photos.
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+
+  &__item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// GLightbox hides its previous/next arrows on small screens (swipe only);
+// keep them on phones too. GLightbox's stylesheet loads after this one,
+// hence the extra class.
+.glightbox-container.glightbox-clean {
+  .gprev,
+  .gnext {
+    top: 45%;
+  }
+}

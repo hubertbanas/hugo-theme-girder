@@ -1,0 +1,178 @@
+// A small base layer: the same box sizing, margins and form-control fonts in
+// every browser, the heading scale, and the centred container.
+@use 'variables' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  font-size: 14px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+b,
+strong {
+  font-weight: 700;
+}
+
+img {
+  border: 0;
+  vertical-align: middle;
+}
+
+svg:not(:root) {
+  overflow: hidden;
+}
+
+button {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-transform: none;
+  overflow: visible;
+  cursor: pointer;
+}
+
+button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.1;
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+h4,
+h5,
+h6 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 36px;
+}
+
+h2 {
+  font-size: 30px;
+}
+
+h3 {
+  font-size: 24px;
+}
+
+h4 {
+  font-size: 18px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  font-size: 12px;
+}
+
+p {
+  margin: 0 0 10px;
+}
+
+ul,
+ol {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+ul ul,
+ul ol,
+ol ul,
+ol ol {
+  margin-bottom: 0;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+// Centred, fixed-width content column. flow-root keeps the margins of its
+// first and last children inside it.
+.container {
+  display: flow-root;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    width: 970px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
+  }
+}
+
+@media print {
+  *,
+  *::before,
+  *::after {
+    color: #000000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .navbar,
+  .social-icons,
+  .navbar__toggle,
+  .hero__controls {
+    display: none !important;
+  }
+
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+}

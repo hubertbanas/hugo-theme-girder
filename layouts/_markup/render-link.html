@@ -1,0 +1,17 @@
+{{- /* Links in Markdown content. A page path ("/services/", "design",
+       "../about/history.md") becomes that page's URL, so links keep working
+       when the site lives under a sub-path (a GitHub Pages project site).
+       Links to other sites open in a new tab, and say so to screen readers. */ -}}
+{{- $u := urls.Parse .Destination -}}
+{{- $href := .Destination -}}
+{{- $external := in (slice "http" "https") $u.Scheme -}}
+{{- if and (not $u.IsAbs) $u.Path -}}
+  {{- with .PageInner.GetPage $u.Path -}}
+    {{- $href = .RelPermalink -}}
+    {{- with $u.Fragment }}{{ $href = printf "%s#%s" $href . }}{{ end -}}
+  {{- else -}}
+    {{- $href = partial "link.html" .Destination -}}
+  {{- end -}}
+{{- end -}}
+<a href="{{ $href | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if $external }} target="_blank" rel="noopener"{{ end }}>{{ .Text }}{{ if $external }}<span class="sr-only"> (opens in a new tab)</span>{{ end }}</a>
+{{- /* chomp trailing newline */ -}}

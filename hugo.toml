@@ -1,0 +1,7 @@
+# The theme's own configuration. Hugo merges it into the site's; the site's
+# values win.
+[module]
+  [module.hugoVersion]
+    # Image processing to WebP needs the extended edition.
+    extended = true
+    min = "0.146.0"

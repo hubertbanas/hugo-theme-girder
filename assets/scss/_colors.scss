@@ -1,0 +1,150 @@
+// The colours, as CSS custom properties on :root: the light scheme, and the
+// dark one for visitors whose device asks for dark (prefers-color-scheme) or
+// who picked dark with the header's button (data-color-scheme="dark" on
+// <html>, set by assets/js/color-scheme.js). The other partials use them
+// through _variables.scss. Printing always uses the light scheme.
+//
+// The palettes come from layouts/_partials/main-css.html (the theme's
+// defaults and the site's [params.colors] / [params.colors_dark]). The
+// light scheme's greys are fixed; the dark scheme's are mixed from its
+// background colour, so a site's own dark background keeps them in tune.
+@use 'sass:color';
+@use 'sass:math';
+@use 'sass:string';
+@use 'hugo:vars' as hugo;
+
+// A computed colour rounded to whole channels, so it's written as #rrggbb.
+@function round($color) {
+  @return rgb(
+    math.round(color.channel($color, 'red', $space: rgb)),
+    math.round(color.channel($color, 'green', $space: rgb)),
+    math.round(color.channel($color, 'blue', $space: rgb))
+  );
+}
+
+// A colour for an SVG in a data: URL: hex, with "#" written %23.
+@function svg-color($color) {
+  $digits: '0123456789abcdef';
+  $out: '%23';
+  @each $channel in ('red', 'green', 'blue') {
+    $v: math.round(color.channel($color, $channel, $space: rgb));
+    $out: $out +
+      string.slice($digits, math.floor(math.div($v, 16)) + 1, math.floor(math.div($v, 16)) + 1) +
+      string.slice($digits, $v % 16 + 1, $v % 16 + 1);
+  }
+  @return $out;
+}
+
+// Thin lines rising left to right, as tiny SVG tiles: 8px for the page
+// background, 16px with 2px lines for the title band.
+@function lines($color) {
+  @return url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath fill='#{svg-color($color)}' d='M7 0h1v1H7zM6 1h1v1H6zM5 2h1v1H5zM4 3h1v1H4zM3 4h1v1H3zM2 5h1v1H2zM1 6h1v1H1zM0 7h1v1H0z'/%3E%3C/svg%3E");
+}
+
+@function lines-wide($color) {
+  @return url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath fill='#{svg-color($color)}' d='M0 0h1v1H0zM15 0h1v2h-1zM14 1h1v2h-1zM13 2h1v2h-1zM12 3h1v2h-1zM11 4h1v2h-1zM10 5h1v2h-1zM9 6h1v2H9zM8 7h1v2H8zM7 8h1v2H7zM6 9h1v2H6zM5 10h1v2H5zM4 11h1v2H4zM3 12h1v2H3zM2 13h1v2H2zM1 14h1v2H1zM0 15h1v1H0z'/%3E%3C/svg%3E");
+}
+
+// A lighter (or, with a negative amount, darker) shade of a grey background.
+@function tint($background, $amount) {
+  @if $amount < 0 {
+    @return round(color.mix(#000000, $background, -$amount));
+  }
+  @return round(color.mix(#ffffff, $background, $amount));
+}
+
+@mixin palette($primary, $primary-dark, $link, $text, $muted, $background, $surface, $dark) {
+  --color-primary: #{$primary};
+  --color-primary-dark: #{$primary-dark};
+  --color-link: #{$link};
+  --color-text: #{$text};
+  --color-muted: #{$muted};
+  --color-background: #{$background};
+  --color-surface: #{$surface};
+  --color-dark: #{$dark};
+}
+
+:root {
+  $link: hugo.$light-link;
+  $link-hover: hugo.$light-primary-dark;
+  @if $link == auto {
+    $link: hugo.$light-primary;
+  } @else {
+    $link-hover: round(color.scale($link, $lightness: -15%));
+  }
+  @include palette(
+    hugo.$light-primary,
+    hugo.$light-primary-dark,
+    $link,
+    hugo.$light-text,
+    hugo.$light-muted,
+    hugo.$light-background,
+    hugo.$light-surface,
+    hugo.$light-dark
+  );
+  --color-link-hover: #{$link-hover};
+  --color-backdrop: #ffffff;
+  --color-band: #eeeeee;
+  --color-border: rgb(0 0 0 / 8%);
+  --color-nav-start: #ffffff;
+  --color-nav-end: #ededed;
+  --color-nav-shadow: rgb(0 0 0 / 25%);
+  --color-box-shadow: rgb(0 0 0 / 33%);
+  --color-breadcrumb-shadow: #e6e6e6;
+  --color-breadcrumb-chevron: #e2e2e2;
+  --color-btn-border: #dddddd;
+  --color-btn-border-hover: #adadad;
+  --color-focus: #1a1a1a;
+  --pattern-lines: #{lines(#e9e9e9)};
+  --pattern-lines-wide: #{lines-wide(#e9e9e9)};
+  color-scheme: light;
+}
+
+@mixin dark-scheme {
+  $background: hugo.$dark-background;
+  $backdrop: tint($background, -35%);
+  $link: hugo.$dark-link;
+  @if $link == auto {
+    $link: round(color.scale(hugo.$dark-primary, $lightness: 45%));
+  }
+  @include palette(
+    hugo.$dark-primary,
+    hugo.$dark-primary-dark,
+    $link,
+    hugo.$dark-text,
+    hugo.$dark-muted,
+    $background,
+    hugo.$dark-surface,
+    hugo.$dark-dark
+  );
+  --color-link-hover: #{round(color.scale($link, $lightness: 35%))};
+  --color-backdrop: #{$backdrop};
+  --color-band: #{tint($background, 3%)};
+  --color-border: rgb(255 255 255 / 10%);
+  --color-nav-start: #{tint($background, 6%)};
+  --color-nav-end: #{tint($background, 2.5%)};
+  --color-nav-shadow: rgb(0 0 0 / 50%);
+  --color-box-shadow: rgb(0 0 0 / 60%);
+  --color-breadcrumb-shadow: #{$backdrop};
+  --color-breadcrumb-chevron: #{tint($background, 12%)};
+  --color-btn-border: #{tint($background, 20%)};
+  --color-btn-border-hover: #{tint($background, 40%)};
+  --color-focus: #f0f0f0;
+  --pattern-lines: #{lines(tint($backdrop, 4%))};
+  --pattern-lines-wide: #{lines-wide(tint(hugo.$dark-surface, 4%))};
+  color-scheme: dark;
+}
+
+@if hugo.$dark-mode == 1 {
+  @media screen and (prefers-color-scheme: dark) {
+    :root:not([data-color-scheme='light']) {
+      @include dark-scheme;
+    }
+  }
+
+  @media screen {
+    :root[data-color-scheme='dark'] {
+      @include dark-scheme;
+    }
+  }
+}

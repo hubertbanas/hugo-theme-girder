@@ -1,0 +1,13 @@
+// markdownlint's rules for every Markdown file. .markdownlint-cli2.jsonc lists
+// the folders to skip; .github/.markdownlint.jsonc extends these rules.
+{
+  "default": true,
+  // Prettier owns line wrapping; don't fight it over line length.
+  "MD013": false,
+  "MD007": { "indent": 2 },
+  // Content pages start with front matter and a ## heading (the page title
+  // is the # heading, from front matter).
+  "MD041": false,
+  // Tables are written by hand and aligned by Prettier.
+  "MD060": false,
+}

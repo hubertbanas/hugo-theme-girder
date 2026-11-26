@@ -1,0 +1,292 @@
+@use 'variables' as *;
+
+// Text beside a photo, side by side from tablet width up.
+.prose-with-photo {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  align-items: start;
+  margin-top: 30px;
+
+  &__text h2:first-child {
+    margin-top: 0;
+  }
+
+  &__text > p:first-child {
+    margin-top: 1.5px;
+  }
+
+  &__photo img {
+    width: 450px;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto 5px;
+  }
+}
+
+.page-content .prose-with-photo + h2 {
+  margin-top: 60px;
+}
+
+@media (max-width: 767px) {
+  .prose-with-photo {
+    row-gap: 60px;
+  }
+}
+
+@media (min-width: 768px) {
+  .prose-with-photo {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// Breadcrumbs: parent pages in bold, each followed by a thin grey chevron
+// drawn across the full height of the bar.
+.breadcrumb-bar {
+  background: $color-background;
+  box-shadow: 0 2px 2px $color-breadcrumb-shadow;
+}
+
+.breadcrumb {
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    line-height: 18px;
+    color: $color-muted;
+  }
+
+  li {
+    padding: 14px 0;
+  }
+
+  li:not(:last-child) {
+    padding: 0;
+  }
+
+  a {
+    position: relative;
+    display: block;
+    padding: 14px 20px 14px 0;
+    margin-right: 20px;
+    font-weight: 700;
+    color: $color-muted;
+
+    &:hover,
+    &:focus {
+      color: $color-text;
+      text-decoration: none;
+    }
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      width: 1px;
+      height: 27px;
+      background: $color-breadcrumb-chevron;
+    }
+
+    &::before {
+      top: -2px;
+      transform: rotate(-30deg);
+    }
+
+    &::after {
+      top: 21px;
+      transform: rotate(30deg);
+    }
+  }
+}
+
+@media (max-width: 479px) {
+  .breadcrumb {
+    ol {
+      font-size: 10px;
+      line-height: 15px;
+    }
+
+    li {
+      padding: 10px 0;
+    }
+
+    a {
+      padding: 10px 10px 10px 0;
+      margin-right: 10px;
+
+      &::before,
+      &::after {
+        height: 21px;
+      }
+
+      &::after {
+        top: 16px;
+      }
+    }
+  }
+}
+
+// Contact page: the map right under the breadcrumb bar, with the details
+// centred below it at the same width.
+.contact-map-band {
+  padding: 0 15px;
+}
+
+.contact-map {
+  // Leaflet's panes and controls use z-index 400-1000; give the map its own
+  // stacking context so they stay inside it and the navigation's dropdowns
+  // still open on top of the map.
+  position: relative;
+  z-index: 0;
+  max-width: 672px;
+  height: 380px;
+  margin: 0 auto;
+  background: $color-surface;
+  font-family: $font-body;
+
+  // An optional picture of the map, shown at once and centred as Leaflet
+  // centres the map; hidden once the live map's tiles have loaded.
+  &__snapshot {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: none;
+  }
+
+  // Same box as Leaflet's attribution, which replaces it.
+  &__credit {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0 5px;
+    background: rgb(255 255 255 / 80%);
+    color: #333333;
+    font-size: 12px;
+    line-height: 1.4;
+
+    a {
+      color: #005a80;
+      text-decoration: none;
+    }
+  }
+
+  // Leaflet's own attribution links, darkened to read at 4.5:1.
+  .leaflet-control-attribution a {
+    color: #005a80;
+  }
+
+  &--live &__snapshot,
+  &--live &__credit {
+    display: none;
+  }
+}
+
+.contact-section {
+  max-width: 672px;
+  margin: 0 auto;
+}
+
+.page-content .contact-section__title {
+  margin-top: 60px;
+  font-size: 30px;
+  line-height: 33px;
+}
+
+.page-content .contact-details {
+  margin: 45px 0 30px;
+  font-size: 14px;
+  line-height: 21px;
+
+  b {
+    font-weight: 700;
+  }
+}
+
+// Each detail line starts with a 16px icon.
+.contact-details__icon {
+  margin-right: 5px;
+  line-height: 27px;
+  color: $color-muted;
+
+  svg {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: -2px;
+  }
+}
+
+// Figures (charts, diagrams) below the text: two equal columns from tablet
+// width up.
+.figure-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  align-items: flex-start;
+  gap: 30px;
+  margin-top: 40.5px;
+
+  img {
+    max-width: 100%;
+    height: auto;
+    margin: 5px 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .figure-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// A logo above the page's text (front matter logo_image).
+.page-logo {
+  display: flow-root;
+  margin-top: 30px;
+
+  &__img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 5px auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .page-logo--in-column {
+    max-width: calc((100% - 60px) / 3);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+// A list of links (front matter links): each link at least 24px tall, so
+// it's easy to hit (WCAG 2.5.8).
+.page-content .link-list a {
+  display: inline-block;
+  padding: 3px 0;
+}
+
+// A section's list of its pages (front matter list_pages).
+.page-list {
+  margin-top: 30px;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    padding: 15px 0;
+    border-bottom: 1px solid $color-border;
+  }
+
+  &__title {
+    margin: 0 0 5px;
+    font-size: 16px;
+  }
+}

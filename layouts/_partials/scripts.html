@@ -1,0 +1,2 @@
+{{ $nav := resources.Get "js/nav.js" | resources.Minify | resources.Fingerprint }}
+<script src="{{ $nav.RelPermalink }}" integrity="{{ $nav.Data.Integrity }}"></script>

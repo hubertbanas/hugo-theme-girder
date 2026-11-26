@@ -1,0 +1,8 @@
+{{/* A file under assets/ (vendored library, font, image), published under a
+     name with a hash of its content, e.g. /vendor/leaflet/leaflet.<sha256>.js,
+     so a browser may cache it for good: a changed file gets a new name. Its
+     .Data.Integrity is the matching integrity="sha256-..." value. */}}
+{{ $file := resources.Get . }}
+{{ if not $file }}{{ errorf "asset.html: no assets/%s" . }}{{ end }}
+{{ $file = $file | resources.Fingerprint }}
+{{ return $file }}

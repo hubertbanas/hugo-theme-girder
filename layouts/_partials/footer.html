@@ -1,0 +1,21 @@
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__inner">
+      {{/* [params] copyright, with {year} for the current year. */}}
+      <p class="site-footer__copyright">
+        {{- with site.Params.copyright -}}
+          {{ replace . "{year}" (string now.Year) | markdownify }}
+        {{- else -}}
+          © {{ now.Year }} {{ site.Title }}
+        {{- end -}}
+      </p>
+      {{ with site.Menus.footer }}
+        <ul class="site-footer__links">
+          {{ range . }}
+            <li>{{ partial "menu-link.html" (dict "entry" . "page" $) }}</li>
+          {{ end }}
+        </ul>
+      {{ end }}
+    </div>
+  </div>
+</footer>

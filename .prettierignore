@@ -1,0 +1,14 @@
+node_modules
+public
+resources
+package-lock.json
+
+# Go templates ({{ }} syntax): Prettier's HTML parser would corrupt them.
+layouts
+
+# TOML isn't a format Prettier supports.
+*.toml
+
+# Vendored third-party files: never reformat code we didn't write.
+assets/vendor
+static/vendor

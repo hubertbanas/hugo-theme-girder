@@ -1,0 +1,57 @@
+{{/* Renders an image as WebP with a srcset, so each screen downloads only the
+     pixels it shows. SVG files are shown as they are.
+     Params:
+       src            path relative to assets/ (or image: a page resource)
+       alt, class
+       width          the widest it's shown, in CSS px (default: the file's
+                      own width). The srcset offers this and twice it (for
+                      high-density screens), never wider than the file.
+                      Required, with height, for an SVG.
+       height         crop to width x height (keeping that shape at 2x)
+                      instead of keeping the file's shape; for an SVG, its
+                      height attribute
+       widths         srcset widths to use instead (e.g. a full-width hero)
+       sizes          default "(max-width: <width>px) 100vw, <width>px"
+       display_width  width attribute, when the file is narrower than it's
+                      shown
+       eager          the page's largest image: load now, at high priority */}}
+{{ $img := .image }}
+{{ if not $img }}{{ $img = resources.Get .src }}{{ end }}
+{{ if not $img }}{{ errorf "img.html: no image assets/%s" .src }}{{ end }}
+{{ if eq $img.MediaType.SubType "svg" }}
+  <img src="{{ ($img | resources.Fingerprint).RelPermalink }}"{{ with .width }} width="{{ . }}"{{ end }}{{ with .height }} height="{{ . }}"{{ end }}{{ with .class }} class="{{ . }}"{{ end }} alt="{{ .alt | default "" }}"{{ if .eager }} fetchpriority="high"{{ else }} loading="lazy"{{ end }}>
+{{ else }}
+  {{ $w := int (.width | default $img.Width) }}
+  {{ $ratio := div (float $img.Height) $img.Width }}
+  {{ $maxW := $img.Width }}
+  {{ with .height }}
+    {{ $ratio = div (float .) $w }}
+    {{ $maxW = int (math.Min $img.Width (math.Floor (div $img.Height $ratio))) }}
+  {{ end }}
+
+  {{ $candidates := .widths | default (slice $w (mul 2 $w)) }}
+  {{ $widths := slice }}
+  {{ range $candidates }}
+    {{ $widths = $widths | append (int (math.Min . $maxW)) }}
+  {{ end }}
+  {{ $widths = sort (uniq $widths) }}
+
+  {{ $srcset := slice }}
+  {{ $src := "" }}
+  {{ range $widths }}
+    {{ $r := "" }}
+    {{ if $.height }}
+      {{ $r = $img.Fill (printf "%dx%d webp q80" . (int (math.Round (mul . $ratio)))) }}
+    {{ else }}
+      {{ $r = $img.Resize (printf "%dx webp q80" .) }}
+    {{ end }}
+    {{ $srcset = $srcset | append (printf "%s %dw" $r.RelPermalink $r.Width) }}
+    {{/* src (for anything ignoring srcset): the 1x size */}}
+    {{ if or (not $src) (le $r.Width $w) }}{{ $src = $r }}{{ end }}
+  {{ end }}
+
+  {{ $attrW := int (.display_width | default $src.Width) }}
+  {{ $attrH := int (math.Round (div (mul $attrW $src.Height) (float $src.Width))) }}
+  {{ $sizes := .sizes | default (printf "(max-width: %dpx) 100vw, %dpx" $attrW $attrW) }}
+  <img src="{{ $src.RelPermalink }}"{{ if gt (len $srcset) 1 }} srcset="{{ delimit $srcset ", " }}" sizes="{{ $sizes }}"{{ end }} width="{{ $attrW }}" height="{{ $attrH }}"{{ with .class }} class="{{ . }}"{{ end }} alt="{{ .alt | default "" }}"{{ if .eager }} fetchpriority="high"{{ else }} loading="lazy"{{ end }}>
+{{ end }}

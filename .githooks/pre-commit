@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+# Blocks commits of secret-looking files and of private terms. Enable once per
+# clone with: git config core.hooksPath .githooks
+set -eu
+
+staged="$(git diff --cached --name-only --diff-filter=ACMR)"
+[ -n "$staged" ] || exit 0
+
+blocked="$(printf '%s\n' "$staged" | grep -E '(^|/)\.env(\..*)?$|(^|/)\.secrets/|\.(pem|key|p12|pfx|jks|keystore)$|(^|/)CLAUDE\.md$|(^|/)\.claude/' | grep -v '\.env\.example$' || true)"
+if [ -n "$blocked" ]; then
+  echo "pre-commit: blocked file(s) that look like secrets or local assistant config:"
+  printf '  - %s\n' $blocked
+  echo "Unstage them, or bypass once with: git commit --no-verify"
+  exit 1
+fi
+
+# The private-term scan, on the staged files. Without a denylist this fails:
+# set one up (scripts/check-private-terms.mjs) rather than skipping it.
+if command -v node >/dev/null 2>&1; then
+  printf '%s\n' "$staged" | tr '\n' '\0' | xargs -0 node scripts/check-private-terms.mjs >/dev/null || {
+    printf '%s\n' "$staged" | tr '\n' '\0' | xargs -0 node scripts/check-private-terms.mjs
+    exit 1
+  }
+else
+  echo "pre-commit: node not found, private-term scan skipped" >&2
+fi

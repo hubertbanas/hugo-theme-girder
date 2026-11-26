@@ -1,0 +1,64 @@
+// The theme's settings.
+//
+// Colours are CSS custom properties, so they can change with the colour
+// scheme while the page is open: _colors.scss sets them, for the light and
+// the dark scheme, from the site's [params.colors] and [params.colors_dark].
+@use 'sass:color';
+@use 'hugo:vars' as hugo;
+
+$color-primary: var(--color-primary);
+$color-primary-dark: var(--color-primary-dark);
+$color-link: var(--color-link);
+$color-link-hover: var(--color-link-hover);
+$color-text: var(--color-text);
+$color-muted: var(--color-muted);
+$color-background: var(--color-background);
+$color-surface: var(--color-surface);
+$color-dark: var(--color-dark);
+$color-backdrop: var(--color-backdrop);
+$color-band: var(--color-band);
+$color-border: var(--color-border);
+$color-nav-start: var(--color-nav-start);
+$color-nav-end: var(--color-nav-end);
+$color-nav-shadow: var(--color-nav-shadow);
+$color-box-shadow: var(--color-box-shadow);
+$color-breadcrumb-shadow: var(--color-breadcrumb-shadow);
+$color-breadcrumb-chevron: var(--color-breadcrumb-chevron);
+$color-btn-border: var(--color-btn-border);
+$color-btn-border-hover: var(--color-btn-border-hover);
+$color-focus: var(--color-focus);
+
+// Text on the primary colour, and on the carousel's dark caption box, is
+// white in both schemes.
+$color-white: #ffffff;
+
+// The primary colour lightened, for small text on the dark caption box (at
+// least 4.5:1 there, even over a white photo).
+$color-primary-on-dark: color.scale(hugo.$light-primary, $lightness: 60%);
+
+$font-body: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+$font-heading: 'Montserrat', Helvetica, Arial, sans-serif;
+
+// Below this width the header turns into the phone layout (MENU button).
+$breakpoint-mobile: 991px;
+
+// The hero photo's height over its width ([params] hero_height/hero_width).
+$hero-ratio: hugo.$hero-ratio;
+
+// Rules for the dark scheme only: on a device set to dark (unless the visitor
+// picked light), or when the visitor picked dark. Use inside a selector.
+@mixin dark {
+  @if hugo.$dark-mode == 1 {
+    @media screen and (prefers-color-scheme: dark) {
+      :root:not([data-color-scheme='light']) & {
+        @content;
+      }
+    }
+
+    @media screen {
+      :root[data-color-scheme='dark'] & {
+        @content;
+      }
+    }
+  }
+}

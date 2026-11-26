@@ -1,0 +1,45 @@
+{{/* The home page hero: front matter slides, each {image, kicker, heading,
+     link, alt}. Every photo is cropped to the hero's shape (1920x580 by
+     default, [params] hero_width/hero_height), so any landscape photo fits.
+     assets/js/carousel.js moves the slides; it pauses on hover and focus,
+     has a pause button, and doesn't start for visitors who prefer reduced
+     motion. */}}
+{{ $slides := .Params.slides }}
+{{ $ratio := div (float (site.Params.hero_height | default 580)) (site.Params.hero_width | default 1920) }}
+<section class="hero" aria-roledescription="carousel" aria-label="{{ .Params.slides_label | default "Highlights" }}">
+  <div class="carousel" data-carousel data-interval="{{ .Params.slides_interval | default 5000 }}">
+    {{ if gt (len $slides) 1 }}
+      <button type="button" class="carousel__pause" aria-label="Pause slides" hidden>
+        <span class="carousel__pause-icon carousel__pause-icon--pause">{{ partial "icon.html" "pause" }}</span>
+        <span class="carousel__pause-icon carousel__pause-icon--play">{{ partial "icon.html" "play" }}</span>
+      </button>
+    {{ end }}
+    <div class="carousel__track" aria-live="off">
+      {{ range $i, $slide := $slides }}
+        <div class="carousel__slide{{ if eq $i 0 }} is-active{{ end }}" role="group" aria-roledescription="slide" aria-label="{{ add $i 1 }} of {{ len $slides }}">
+          {{/* Full width up to the 1230px box; the first slide is the page's
+               largest image, so it loads at once. */}}
+          {{ partial "img.html" (dict "src" $slide.image "alt" ($slide.alt | default "") "class" "carousel__image" "width" 1536 "height" (math.Round (mul 1536 $ratio)) "widths" (slice 480 768 1024 1536 1920) "sizes" "(max-width: 1230px) 100vw, 1230px" "eager" (eq $i 0)) }}
+          <div class="container">
+            <div class="carousel__caption">
+              {{ with $slide.kicker }}<div class="carousel__kicker">{{ . }}</div>{{ end }}
+              <h2 class="carousel__heading">
+                {{- with $slide.link }}<a href="{{ partial "link.html" . }}">{{ $slide.heading }}</a>{{ else }}{{ $slide.heading }}{{ end -}}
+              </h2>
+            </div>
+          </div>
+        </div>
+      {{ end }}
+    </div>
+    {{ if gt (len $slides) 1 }}
+      <button type="button" class="carousel__control carousel__control--prev" hidden>
+        <svg class="carousel__arrow" viewBox="0 0 45 45" aria-hidden="true" focusable="false"><polyline points="25.375,15.125 17,23.5 25.375,31.75"/></svg>
+        <span class="sr-only">Previous slide</span>
+      </button>
+      <button type="button" class="carousel__control carousel__control--next" hidden>
+        <svg class="carousel__arrow" viewBox="0 0 45 45" aria-hidden="true" focusable="false"><polyline points="18.25,15 26.875,23.5 18.25,32"/></svg>
+        <span class="sr-only">Next slide</span>
+      </button>
+    {{ end }}
+  </div>
+</section>

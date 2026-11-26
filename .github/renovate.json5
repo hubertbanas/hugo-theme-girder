@@ -1,0 +1,25 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  // config:recommended plus digest pinning of actions and images, weekly lock
+  // file maintenance, config migration and abandoned-package detection.
+  extends: ['config:best-practices'],
+  schedule: ['on friday and saturday'],
+  timezone: 'America/New_York',
+  lockFileMaintenance: { enabled: true, schedule: ['on friday and saturday'] },
+  dependencyDashboard: true,
+  prConcurrentLimit: 5,
+  assignees: ['hubertbanas'],
+  packageRules: [
+    {
+      matchUpdateTypes: ['minor', 'patch'],
+      groupName: 'all non-major dependencies',
+      automerge: false,
+    },
+    {
+      // Hugo's image (compose.yaml) is what both the preview and CI build
+      // with; its own PR, so a Hugo change is easy to test on its own.
+      matchPackageNames: ['ghcr.io/gohugoio/hugo'],
+      groupName: 'Hugo',
+    },
+  ],
+}

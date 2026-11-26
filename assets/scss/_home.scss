@@ -1,0 +1,245 @@
+@use 'variables' as *;
+
+// Tagline band under the hero: on phones and tablets the text and buttons
+// are centred one above the other; on desktop the text sits left and the
+// buttons right, both vertically centred.
+.tagline-band {
+  background: $color-band;
+
+  &__text {
+    margin: 0;
+    padding: 30px 0 10px;
+    color: $color-muted;
+    font-size: 20px;
+    line-height: 30px;
+    text-align: center;
+  }
+
+  // Inline-block buttons: the whitespace between them in the markup sets
+  // the small gap.
+  &__ctas {
+    padding: 10px 0 30px;
+    text-align: center;
+
+    .btn {
+      margin: 5px 0;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+  }
+}
+
+@media (min-width: #{$breakpoint-mobile + 1}) {
+  .tagline-band__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .tagline-band__text {
+    padding: 23px 0 22px;
+  }
+
+  .tagline-band__ctas {
+    padding: 14px 0 13px;
+
+    .btn {
+      margin: 0;
+    }
+  }
+}
+
+// The rows below the tagline band, on a six-column grid (165px columns,
+// 30px apart, on a wide screen).
+.home-content {
+  padding: 30px 0 60px;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding-bottom: 30px;
+  }
+}
+
+.home-grid {
+  margin-bottom: 30px;
+
+  // Each cell keeps its own margins, stacked or side by side.
+  &__cell {
+    display: flow-root;
+  }
+
+  &__cell + &__cell {
+    margin-top: 30px;
+  }
+
+  &__heading {
+    margin: 10.5px 0;
+    color: $color-text;
+    font-size: 18px;
+    line-height: 19.8px;
+    text-align: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .home-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    column-gap: 30px;
+    align-items: start;
+
+    &__cell + &__cell {
+      margin-top: 0;
+    }
+
+    // The featured block and the cards: an empty column either side of each.
+    &__cell--featured {
+      grid-column: 2 / span 2;
+    }
+
+    &__cell--cards {
+      grid-column: 5 / span 2;
+    }
+
+    // Without a featured block, the cards take the middle four columns.
+    &__cell--cards:only-child {
+      grid-column: 2 / span 4;
+    }
+
+    // Logos fill columns 2-5, row by row.
+    &--logos {
+      row-gap: 25px;
+
+      > :nth-child(4n + 1) {
+        grid-column-start: 2;
+      }
+
+      .home-widget {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .home-grid--logos {
+    display: flow-root;
+  }
+}
+
+// One block in a grid cell, 30px above the next.
+.home-widget {
+  margin-bottom: 30px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &::after {
+    content: '';
+    display: table;
+  }
+
+  &__img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 5px auto;
+  }
+
+  // In the dark scheme, partner logos (usually drawn for a white page) each
+  // sit on a light tile.
+  .home-grid--logos &__img {
+    @include dark {
+      padding: 6px 10px;
+      border-radius: 2px;
+      background: #f2f2f2;
+    }
+  }
+}
+
+// With featured.image_dark: one image for each scheme. Both classes, so
+// these win over .home-widget__img's display: block.
+.home-widget__img.home-widget__img--dark {
+  display: none;
+
+  @include dark {
+    display: block;
+  }
+}
+
+.home-widget__img.home-widget__img--light {
+  @include dark {
+    display: none;
+  }
+}
+
+// A card: a small picture beside a title and a line of text.
+.page-box {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+
+  &__picture {
+    flex: 0 0 100px;
+    display: block;
+
+    img {
+      display: block;
+      width: 100px;
+      height: 75px;
+      object-fit: cover;
+    }
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    margin: 0 0 10.5px;
+    text-transform: uppercase;
+    font-size: 14px;
+    line-height: 15.4px;
+
+    a {
+      color: $color-text;
+
+      &:hover {
+        color: $color-link;
+        text-decoration: none;
+      }
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 21px;
+    color: $color-muted;
+  }
+}
+
+// Full-width band in the primary colour, 60px above the logos.
+.banner-band {
+  margin-bottom: 60px;
+  padding: 30px 0;
+  background: $color-primary;
+  text-align: center;
+
+  &__text {
+    margin: 0;
+    color: $color-white;
+    font-family: $font-heading;
+    font-size: 14px;
+    line-height: 21px;
+  }
+}
+
+@media (min-width: #{$breakpoint-mobile + 1}) {
+  .banner-band__text {
+    padding: 30px 0;
+    font-size: 20px;
+    line-height: 30px;
+  }
+}
